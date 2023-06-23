@@ -1,8 +1,10 @@
 
 //use sqlx::sqlite::{SqlitePool};
 use crate::{config::{Config, HttpConfig}, endpoints::*, backend};
-
-
+use http_types::headers::HeaderValue;
+use tide::security::{CorsMiddleware, Origin};
+use tide::log;
+use tide::log::LevelFilter;
 
 #[derive(Clone, Debug)]
 pub(crate) struct AppState {
@@ -24,10 +26,22 @@ impl App {
         let cfg = Config::from_env();
         let http_cfg = HttpConfig::from_env();
 
+        // Initialize the logger
+        env_logger::builder()
+            .filter_level(LevelFilter::Info)
+            .init();
+         
         let mut state = AppState { server: backend::Server::with_config(cfg) };
         state.server.connect().await?;
 
+        let cors = CorsMiddleware::new()
+            .allow_methods("GET, POST, OPTIONS".parse::<HeaderValue>().unwrap())
+            .allow_origin(Origin::from("*"))
+            .allow_credentials(true);
+
         let mut app = tide::with_state(state);
+
+        app.with(cors);
 
         app.at("/api/users").post(register);
     
