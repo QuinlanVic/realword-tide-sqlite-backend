@@ -36,6 +36,7 @@
 // Add to dependencies
 // rocket = "0.5.0"
 // rocket_cors = "0.5.1"
+// sqlite = "0.37.0"
 use once_cell::sync::OnceCell;
 
 use realworld_tide_sqlite_backend::*;
