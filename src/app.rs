@@ -35,7 +35,7 @@ impl App {
         state.server.connect().await?;
 
         let cors = CorsMiddleware::new()
-            .allow_methods("GET, POST, OPTIONS, POST, DELETE, PUT".parse::<HeaderValue>().unwrap())
+            .allow_methods("GET, POST, OPTIONS, DELETE, PUT".parse::<HeaderValue>().unwrap())
             .allow_origin(Origin::from("*"))
             .allow_credentials(true);
 
